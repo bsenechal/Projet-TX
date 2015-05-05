@@ -1,0 +1,5 @@
+<section data-ng-controller="GmapController">
+  <google-map center="mymap.center" zoom="mymap.zoom" draggable="true" dragging="mymap.dragging">
+  <marker pan="true" idKey='$index' data-ng-repeat="gmarker in markers" coords="gmarker.coords" ></marker>
+  </google-map>
+</section>

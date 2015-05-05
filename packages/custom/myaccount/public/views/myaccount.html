@@ -1,0 +1,15 @@
+<section data-ng-controller="MyaccountController">
+    <div class="loader" data-ng-init="init()"></div>
+    <h1>Bonjour {{user.name}}</h1>
+
+    <input type="button" class="btn btn-danger" data-ng-hide="edit" data-ng-click="edit=!edit" value="Edit">
+
+    <br />
+    <br />
+
+    <b>Nom :</b> {{user.name}} <br/>
+
+    <b>Pseudo :</b> {{user.username}} <br/>
+
+    <b>Rôles :</b> {{user.roles}}
+</section>
