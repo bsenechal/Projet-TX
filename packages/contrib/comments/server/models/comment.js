@@ -47,7 +47,7 @@ var CommentSchema = new Schema({
   },
   parent: {
     type: Schema.ObjectId,
-    ref: 'Article',
+    ref: 'Deal',
     index: true
   },
   likes: [{

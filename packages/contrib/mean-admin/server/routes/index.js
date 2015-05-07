@@ -36,11 +36,4 @@ module.exports = function(Admin, app, auth, database) {
     var settings = require('../controllers/settings');
     app.get('/admin/settings', auth.requiresAdmin, settings.get);
     app.put('/admin/settings', auth.requiresAdmin, settings.save);
-
-    //Setting up the deals api
-    var deals = require('../controllers/deals');
-    app.get('/admin/deals', auth.requiresAdmin, deals.all);
-    app.post('/admin/deals', auth.requiresAdmin, deals.create);
-    app.put('/admin/deals/:dealId', auth.requiresAdmin, deals.update);
-    app.delete('/admin/deals/:dealId', auth.requiresAdmin, deals.destroy);
 };

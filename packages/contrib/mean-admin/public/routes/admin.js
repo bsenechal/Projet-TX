@@ -17,9 +17,9 @@ angular.module('mean.mean-admin').config(['$stateProvider', '$urlRouterProvider'
             }).state('adminDeals', {
                 url: '/admin/deals',
                 templateUrl: 'mean-admin/views/deals.html'
-            }).state('adminComments', {
-                url: '/admin/comments',
-                templateUrl: 'mean-admin/views/comments.html'
+            }).state('adminTags', {
+                url: '/admin/Tags',
+                templateUrl: 'mean-admin/views/tags.html'
             });
     }
 ]).config(['ngClipProvider',
