@@ -30,6 +30,16 @@ var DealSchema = new Schema({
     required: true,
     trim: true
   },
+  latitude: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  longitude: {
+    type: String,
+    required: true,
+    trim: true
+  },
   description: {
     type: String,
     required: true,
@@ -65,6 +75,14 @@ DealSchema.path('initialPrice').validate(function(initialPrice) {
 DealSchema.path('salePrice').validate(function(salePrice) {
   return !!salePrice;
 }, 'Le prix de vente ne peut pas être vide');
+
+DealSchema.path('latitude').validate(function(latitude) {
+  return !!latitude;
+}, 'La latitude ne peut pas être vide');
+
+DealSchema.path('longitude').validate(function(longitude) {
+  return !!longitude;
+}, 'La longitude ne peut pas être vide');
 
 DealSchema.path('description').validate(function(description) {
   return !!description;

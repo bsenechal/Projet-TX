@@ -14,6 +14,8 @@ angular.module('mean.deals').controller('DealsController', ['$scope', '$statePar
           title: this.title,
           initialPrice: this.initialPrice,
           salePrice: this.salePrice,
+          latitude: this.latitude,
+          longitude: this.longitude,
           description: this.description
         });
         deal.$save(function(response) {
@@ -23,6 +25,8 @@ angular.module('mean.deals').controller('DealsController', ['$scope', '$statePar
         this.title = '';
         this.initialPrice = '';
         this.salePrice = '';
+        this.latitude = '';
+        this.longitude = '';
         this.description = '';
       } else {
         $scope.submitted = true;
