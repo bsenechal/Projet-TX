@@ -238,4 +238,97 @@ angular.module('mean.maps')
             });
 
         }
+    ])
+    .controller('MapDisplayController', ['$scope', '$window', 'Global', 'Maps', 'Initializer',
+        function($scope, $window, Global, Maps, Initializer) {
+            $scope.global = Global;
+            $scope.package = {
+                name: 'maps'
+            };
+
+            Initializer.mapsInitialized.
+            then(function() {
+
+                console.log("start initialize map");
+
+                var markers = [];
+
+                for (var j = 0; j < markers.length; j++) {
+                        markers[j].setMap(null);
+                }
+
+                var userPos = new google.maps.LatLng(-28.643387, 153.612224);
+                // alert(userPos);
+
+                //Map options  :
+                var mapOptions = {
+                    zoom: 12,
+                    //TODO : make that work !
+                    streetViewControl: false,
+                    // mapTypeControl: true,
+                    mapTypeControl: false,
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                        position: google.maps.ControlPosition.BOTTOM_CENTER
+                    },
+                    zoomControl: true,
+                    zoomControlOptions: {
+                        style: google.maps.ZoomControlStyle.LARGE,
+                        position: google.maps.ControlPosition.LEFT_CENTER
+                    },
+                    scaleControl: true,
+                    streetViewControl: true,
+                    streetViewControlOptions: {
+                        position: google.maps.ControlPosition.LEFT_TOP
+                    },
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                }
+
+
+                var map = new google.maps.Map(document.getElementById('map-canvas'),
+                    mapOptions);
+
+
+                //center config :
+                map.setCenter(userPos);
+
+                console.log("mapinit");
+
+                var defaultBounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(-33.8902, 151.1759),
+                    new google.maps.LatLng(-33.8474, 151.2631));
+                map.fitBounds(defaultBounds);
+
+                console.log("defaultBounds");
+
+                //remove old marker :
+                for (var j = 0; j < markers.length; j++) {
+                    markers[j].setMap(null);
+                }
+                // for each (var deal in $scope.deals) {
+                    
+
+                //     // Create a marker for each place.
+                //     var marker = new google.maps.Marker({
+                //         map: map,
+                //         //icon: image,
+                //         title: place.name,
+                //         draggable: true,
+                //         animation: google.maps.Animation.DROP,
+                //         position: google.maps.LatLng(deal.latitude,deal.longitude)
+                //     });
+                //     console.log("marker 1rst position:");
+                //     console.log(marker.position);
+                //     // console.log("resultPosition before affectation : " + resultPosition);
+                //     // resultPosition = marker.getPosition();
+                //     // console.log("resultPosition after affectation : "  + resultPosition);
+                //     markers.push(marker);
+
+                // }
+
+
+
+                });
+
+        }
     ]);
