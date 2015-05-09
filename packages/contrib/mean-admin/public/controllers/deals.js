@@ -19,6 +19,16 @@ angular.module('mean.mean-admin').controller('AdminDealsController', ['$scope', 
             type: 'number',
             inTable: true
         }, {
+            title: 'latitude',
+            schemaKey: 'latitude',
+            type: 'text',
+            inTable: true
+        }, {
+            title: 'longitude',
+            schemaKey: 'longitude',
+            type: 'text',
+            inTable: true
+        }, {
             title: 'description',
             schemaKey: 'description',
             type: 'text',
@@ -40,6 +50,8 @@ angular.module('mean.mean-admin').controller('AdminDealsController', ['$scope', 
                 title: $scope.deal.title,
                 initialPrice: $scope.deal.initialPrice,
                 salePrice: $scope.deal.salePrice,
+                latitude: $scope.deal.latitude,
+                longitude: $scope.deal.longitude,
                 description: $scope.deal.description
             });
 

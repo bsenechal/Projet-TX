@@ -33,7 +33,7 @@
     </ul>
     <h1 data-ng-hide="!deals || deals.length">No deals yet. <br> Why don't you <a href="/#!/deals/create">Create One</a>?</h1>
   </div>
-  <div class=".col-md-4">
+  <div class=".col-md-4" data-ng-controller="MapDisplayController">
       Result on a Map :
       <div map-canvas id="map-canvas" style="height: 300px;"></div>
   </div>

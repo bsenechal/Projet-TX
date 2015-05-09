@@ -37,11 +37,12 @@ angular.module('mean.maps')
 
             //TODO: make it work !
             //geolocation function :
-            $scope.geolocalize = function(uPos) {
+            $scope.geolocalize = function(map) {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function(position) {
-                        uPos = new google.maps.LatLng(position.coords.latitude,
+                        var uPos = new google.maps.LatLng(position.coords.latitude,
                             position.coords.longitude);
+                        map.setCenter(uPos);
                         console.log('geolocalize: it works');
                     }, function(error) {
                         console.log('geolocalize: Error occurred. Error code: ' + error.code);
@@ -64,10 +65,6 @@ angular.module('mean.maps')
 
                 var markers = [];
 
-                //if posible use localization :
-                var userPos = new google.maps.LatLng(-28.643387, 153.612224);
-                $scope.geolocalize(userPos);
-                // alert(userPos);
 
                 //Map options  :
                 var mapOptions = {
@@ -97,16 +94,20 @@ angular.module('mean.maps')
                 var map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
+                //if posible use localization :
+                var userPos = new google.maps.LatLng(-28.643387, 153.612224);
+                $scope.geolocalize(map);
+                console.log(userPos);
 
                 //center config :
                 map.setCenter(userPos);
 
                 console.log("mapinit");
 
-                var defaultBounds = new google.maps.LatLngBounds(
-                    new google.maps.LatLng(-33.8902, 151.1759),
-                    new google.maps.LatLng(-33.8474, 151.2631));
-                map.fitBounds(defaultBounds);
+                // var defaultBounds = new google.maps.LatLngBounds(
+                //     new google.maps.LatLng(-33.8902, 151.1759),
+                //     new google.maps.LatLng(-33.8474, 151.2631));
+                // map.fitBounds(defaultBounds);
 
                 console.log("defaultBounds");
 
@@ -305,30 +306,45 @@ angular.module('mean.maps')
                 for (var j = 0; j < markers.length; j++) {
                     markers[j].setMap(null);
                 }
-                // for each (var deal in $scope.deals) {
-                    
+                
 
-                //     // Create a marker for each place.
-                //     var marker = new google.maps.Marker({
-                //         map: map,
-                //         //icon: image,
-                //         title: place.name,
-                //         draggable: true,
-                //         animation: google.maps.Animation.DROP,
-                //         position: google.maps.LatLng(deal.latitude,deal.longitude)
-                //     });
-                //     console.log("marker 1rst position:");
-                //     console.log(marker.position);
-                //     // console.log("resultPosition before affectation : " + resultPosition);
-                //     // resultPosition = marker.getPosition();
-                //     // console.log("resultPosition after affectation : "  + resultPosition);
-                //     markers.push(marker);
+                console.log("scope deals ?");
+                console.log($scope.deals);
 
-                // }
+                for (var i = 0; i < $scope.deals.length; i++) {
+              
+                    // Create a marker for each place.
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        //icon: image,
+                        title: $scope.deals[i].title,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP,
+                        position: new google.maps.LatLng($scope.deals[i].latitude,$scope.deals[i].longitude)
+                    });
+
+                    console.log("marker lat/lng from $scope.deals[i]:");
+                    console.log("{" + $scope.deals[i].latitude + ";" + $scope.deals[i].longitude + "}");
+                    console.log("marker 1rst position:");
+                    console.log(marker.position);
+                    // console.log("resultPosition before affectation : " + resultPosition);
+                    // resultPosition = marker.getPosition();
+                    // console.log("resultPosition after affectation : "  + resultPosition);
+                    markers.push(marker);
+
+                }
+
+                //recenter on result :
+                var bounds = new google.maps.LatLngBounds();
+                for(i=0;i<markers.length;i++) {
+                 bounds.extend(markers[i].getPosition());
+                }
+
+                map.fitBounds(bounds);
 
 
 
-                });
+            });
 
         }
     ]);
