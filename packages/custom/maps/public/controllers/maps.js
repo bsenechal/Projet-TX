@@ -301,7 +301,8 @@ angular.module('mean.maps')
                 map.fitBounds(defaultBounds);
 
                 console.log("defaultBounds");
-
+                
+                
                 //remove old marker :
                 for (var j = 0; j < markers.length; j++) {
                     markers[j].setMap(null);

@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mean.deals').controller('DealsController', ['$scope', '$stateParams', '$location', 'Global', 'Deals',
-  function($scope, $stateParams, $location, Global, Deals) {
+angular.module('mean.deals').controller('DealsController', ['$scope','$controller', '$stateParams', '$location', 'Global', 'Deals',
+  function($scope, $controller, $stateParams, $location, Global, Deals) {
     $scope.global = Global;
     $scope.hasAuthorization = function(deal) {
       if (!deal || !deal.user) return false;
@@ -96,7 +96,20 @@ angular.module('mean.deals').controller('DealsController', ['$scope', '$statePar
       Deals.query(function(deals) {
         $scope.deals = deals;
       });
+    };
 
+    $scope.listMap = function() {
+      Deals.query(function(deals) {
+        //call map controller once $scope.deals initialized
+        $controller('MapDisplayController',{$scope: $scope});
+      });
+    };
+
+    $scope.createMap = function() {
+      Deals.query(function(deals) {
+        //call map controller once $scope.deals initialized
+        $controller('MapsController',{$scope: $scope});
+      });
     };
 
     $scope.findOne = function() {
