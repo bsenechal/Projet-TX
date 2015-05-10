@@ -301,7 +301,7 @@ angular.module('mean.maps')
                         $window.document.getElementById('pac-input'));
                         console.log("Got pac-input as input");
                         console.log("Input :" + $scope.input);
-                        
+
                         $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push($scope.input);
 
                         console.log("Put input in map");
@@ -364,17 +364,29 @@ angular.module('mean.maps')
 
                     google.maps.event.addListener($scope.circle, 'radius_changed', function () {
                         $scope.srchRadius = $scope.circle.getRadius();
+                        //Clear listener :
+                        google.maps.event.clearListeners($scope.circle, 'radius_changed');
+                        google.maps.event.clearListeners($scope.circle, 'center_changed');
+                        google.maps.event.clearListeners($scope.autocomplete, 'place_changed');
                         $scope.$apply();
-                        $scope.findByRadius();
+                        $scope.queryByRadius();
                     });
                     google.maps.event.addListener($scope.circle, 'center_changed', function () {
                         $scope.srchLng = $scope.circle.getCenter().lng();
                         $scope.srchLat = $scope.circle.getCenter().lat();
+                        //Clear listener :
+                        google.maps.event.clearListeners($scope.circle, 'radius_changed');
+                        google.maps.event.clearListeners($scope.circle, 'center_changed');
+                        google.maps.event.clearListeners($scope.autocomplete, 'place_changed');
                         $scope.$apply();
-                        $scope.findByRadius();
+                        $scope.queryByRadius();
                     });
+                    //Clear listener :
+                    google.maps.event.clearListeners($scope.circle, 'radius_changed');
+                    google.maps.event.clearListeners($scope.circle, 'center_changed');
+                    google.maps.event.clearListeners($scope.autocomplete, 'place_changed');
                     $scope.$apply();
-                    $scope.findByRadius();
+                    $scope.queryByRadius();
                 });
 
                 console.log("mapinit");
@@ -401,7 +413,7 @@ angular.module('mean.maps')
                     
                     console.log("marker lat/lng from $scope.deals[i]:");
                     console.log("{" + $scope.deals[i].latitude + ";" + $scope.deals[i].longitude + "}");
-                    console.log("marker 1rst position:");
+                    console.log("marker " + i + "; position:");
                     console.log(marker.position);
                     // console.log("resultPosition before affectation : " + resultPosition);
                     // resultPosition = marker.getPosition();
@@ -417,8 +429,6 @@ angular.module('mean.maps')
                 }
 
                 $scope.map.fitBounds(bounds);
-
-
 
             });
   

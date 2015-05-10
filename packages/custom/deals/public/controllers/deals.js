@@ -98,13 +98,8 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
       }
     };
 
-    //TODO :
-    $scope.findByRadius = function() {
-      console.log("findByRadius");
-      console.log(this.srchLng + ";"+ this.srchLat +";"+ this.srchRadius);
-      if (this.srchLng && this.srchLat && this.srchRadius){
-        console.log("findByRadius : with paramaters");
-        //A mettre dans une factory de services ?
+
+    $scope.queryByRadius = function(){
         var DealsByRadius = $resource(
           '/dealsbyradius',
           {srchLng: $scope.srchLng,srchLat: $scope.srchLat, srchRadius: $scope.srchRadius},
@@ -118,27 +113,16 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
           console.log(deals);
           $scope.deals = deals;
           $controller('MapDisplayController',{$scope: $scope});
-        });
+        });    
+    };
 
-
-        // var path = 'dealsbyradius/' 
-        //   // + 'srchLng=' 
-        //   + $scope.srchLng + '/' 
-        //   // + 'srchLat=' 
-        //   + $scope.srchLat + '/' 
-        //   // + 'srchRadius=' 
-        //   + $scope.srchRadius;
-        // console.log('Path = ' + path);
-        // console.log('Method = ' + $location.protocol());
-        // $location.path(path);
-
-
-
-          // Deals.query(function(deals) {
-          //   $scope.deals = deals;
-          // });
-
-        // });
+    $scope.findByRadius = function() {
+      console.log("findByRadius");
+      console.log(this.srchLng + ";"+ this.srchLat +";"+ this.srchRadius);
+      if (this.srchLng && this.srchLat && this.srchRadius){
+        console.log("findByRadius : with paramaters");
+        //A mettre dans une factory de services ?
+        $scope.queryByRadius();
       }
       else{
         console.log("findByRadius : find : without paramaters");
