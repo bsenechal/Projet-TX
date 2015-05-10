@@ -40,6 +40,10 @@ var DealSchema = new Schema({
     required: true,
     trim: true
   },
+  loc: {
+    type: [Number], 
+    index: '2dsphere'
+  },
   description: {
     type: String,
     required: true,
@@ -96,5 +100,11 @@ DealSchema.statics.load = function(id, cb) {
     _id: id
   }).populate('user', 'name username').exec(cb);
 };
+// DealSchema.statics.loadByRadius = function(latitude,longitude,radius,cb) {
+//   this.findByRadius({
+//     _id: id
+//   }).populate('user', 'name username').exec(cb);
+// };
+
 
 mongoose.model('Deal', DealSchema);

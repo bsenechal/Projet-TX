@@ -15,6 +15,8 @@ module.exports = function(Deals, app, auth) {
   app.route('/deals')
     .get(deals.all)
     .post(auth.requiresLogin, deals.create);
+  app.route('/dealsbyradius')
+    .post(deals.dealsByRadius);
   app.route('/deals/:dealId')
     .get(auth.isMongoId, deals.show)
     .put(auth.isMongoId, auth.requiresLogin, hasAuthorization, deals.update)

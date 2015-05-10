@@ -1,4 +1,15 @@
-<section data-ng-controller="DealsController" data-ng-init="find()">
+<section data-ng-controller="DealsController">
+ <!-- data-ng-init="findByRadius()"> -->
+  <form name="dealForm" class="form-horizontal col-md-6" role="form" data-ng-submit="findByRadius()" novalidate>
+  longitude :<input type="text" name="longitude" data-ng-model="srchLng"><br>
+  latitude :<input type="text" name="latitude" data-ng-model="srchLat"><br>
+  radius :<input type="text" name="radius" data-ng-model="srchRadius"><br>
+  <div class="form-group">
+    <div class="col-md-offset-3 col-md-9">
+      <button mean-token="'create-submit'" type="submit" class="btn btn-info">Valider</button>
+    </div>
+  </div>
+  </form>
   <div class=".col-md-4">
     <ul class="deals unstyled">
       <li data-ng-repeat="deal in deals">
@@ -28,12 +39,14 @@
         <span>{{deal.user.name}}</span>
         <div><strong>Prix initial :</strong> {{deal.initialPrice}}</div>
         <div><strong>Prix de vente :</strong> {{deal.salePrice}}</div>
+        <div><strong>Latitude :</strong> {{deal.latitude}}</div>
+        <div><strong>Longitude :</strong> {{deal.longitude}}</div>
         <div>{{deal.description}}</div>
       </li>
     </ul>
     <h1 data-ng-hide="!deals || deals.length">No deals yet. <br> Why don't you <a href="/#!/deals/create">Create One</a>?</h1>
   </div>
-  <div class=".col-md-4" data-ng-init="listMap()">
+  <div class=".col-md-4">
       Result on a Map :
       <div map-canvas id="map-canvas" style="height: 300px;"></div>
   </div>

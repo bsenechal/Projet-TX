@@ -63,7 +63,7 @@ angular.module('mean.maps')
                 var markerSelected = null;
                 console.log("start initialize map");
 
-                var markers = [];
+                $scope.markers = [];
 
 
                 //Map options  :
@@ -91,23 +91,23 @@ angular.module('mean.maps')
                 }
 
 
-                var map = new google.maps.Map(document.getElementById('map-canvas'),
+                $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
                 //if posible use localization :
                 var userPos = new google.maps.LatLng(-28.643387, 153.612224);
-                $scope.geolocalize(map);
+                $scope.geolocalize($scope.map);
                 console.log(userPos);
 
                 //center config :
-                map.setCenter(userPos);
+                $scope.map.setCenter(userPos);
 
                 console.log("mapinit");
 
                 // var defaultBounds = new google.maps.LatLngBounds(
                 //     new google.maps.LatLng(-33.8902, 151.1759),
                 //     new google.maps.LatLng(-33.8474, 151.2631));
-                // map.fitBounds(defaultBounds);
+                // $scope.map.fitBounds(defaultBounds);
 
                 console.log("defaultBounds");
 
@@ -116,7 +116,7 @@ angular.module('mean.maps')
                     $window.document.getElementById('pac-input'));
 
 
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+                $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
                 var options = {
                     //types: ['(cities)']//,
@@ -155,7 +155,7 @@ angular.module('mean.maps')
 
                     // Create a marker for each place.
                     var marker = new google.maps.Marker({
-                        map: map,
+                        map: $scope.map,
                         //icon: image,
                         title: place.name,
                         draggable: true,
@@ -168,27 +168,36 @@ angular.module('mean.maps')
                     // resultPosition = marker.getPosition();
                     $scope.latitude = marker.getPosition().lat();
                     $scope.longitude = marker.getPosition().lng();
+
+                    //to use as mongodb geo
+                    // $scope.loc = [marker.getPosition().lng(),marker.getPosition().lat()];
+
+
                     $scope.$apply();
                     // console.log("resultPosition after affectation : "  + resultPosition);
 
                     //remove old marker :
-                    for (var j = 0; j < markers.length; j++) {
-                        markers[j].setMap(null);
+                    for (var j = 0; j < $scope.markers.length; j++) {
+                        $scope.markers[j].setMap(null);
                     }
 
 
-                    markers.push(marker);
+                    $scope.markers.push(marker);
 
                     google.maps.event.addListener(marker, 'dragend', function() {
                         console.log("marker dragged");
 
-                        //TODO : solde the apply issue -> works only partially !
+                        //TODO : solde the apply issue -> works only partially ! -> DONE
                         $scope.latitude = marker.getPosition().lat();
                         $scope.longitude = marker.getPosition().lng();
+
+                        //done in the deal controller :
+                        // $scope.loc = [marker.getPosition().lng(),marker.getPosition().lat()];
+
                         $scope.$apply();
 
                         console.log(marker.getPosition());
-                        map.setCenter(marker.getPosition());
+                        $scope.map.setCenter(marker.getPosition());
                     });
                     
                     // google.maps.event.addListener(marker, 'click', function() {
@@ -214,7 +223,7 @@ angular.module('mean.maps')
                     //         }
                     //         console.log("marker clicked");
                     //         console.log(marker.position);
-                    //         map.setCenter(marker.getPosition());
+                    //         $scope.map.setCenter(marker.getPosition());
 
                     //     }
 
@@ -224,14 +233,14 @@ angular.module('mean.maps')
 
                     //setmap center on marker :
                     if (marker) {
-                        map.setCenter(marker.getPosition());
+                        $scope.map.setCenter(marker.getPosition());
                     }
                 });
 
                 // Bias the autocomplete results towards places that are within the bounds of the
                 // current map's viewport.
-                google.maps.event.addListener(map, 'bounds_changed', function() {
-                    var bounds = map.getBounds();
+                google.maps.event.addListener($scope.map, 'bounds_changed', function() {
+                    var bounds = $scope.map.getBounds();
                     //limit the search on the specific displayed map :
                     //autocomplete.setBounds(bounds);
                 });
@@ -252,10 +261,10 @@ angular.module('mean.maps')
 
                 console.log("start initialize map");
 
-                var markers = [];
+                $scope.markers = [];
 
-                for (var j = 0; j < markers.length; j++) {
-                        markers[j].setMap(null);
+                for (var j = 0; j < $scope.markers.length; j++) {
+                        $scope.markers[j].setMap(null);
                 }
 
                 var userPos = new google.maps.LatLng(-28.643387, 153.612224);
@@ -286,28 +295,34 @@ angular.module('mean.maps')
                 }
 
 
-                var map = new google.maps.Map(document.getElementById('map-canvas'),
+                $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
 
                 //center config :
-                map.setCenter(userPos);
+                $scope.map.setCenter(userPos);
 
                 console.log("mapinit");
 
                 var defaultBounds = new google.maps.LatLngBounds(
                     new google.maps.LatLng(-33.8902, 151.1759),
                     new google.maps.LatLng(-33.8474, 151.2631));
-                map.fitBounds(defaultBounds);
+                $scope.map.fitBounds(defaultBounds);
 
                 console.log("defaultBounds");
-                
-                
+
+
                 //remove old marker :
-                for (var j = 0; j < markers.length; j++) {
-                    markers[j].setMap(null);
+                for (var j = 0; j < $scope.markers.length; j++) {
+                    $scope.markers[j].setMap(null);
                 }
                 
+                console.log("deals");
+                console.log($scope.deals);
+
+
+                
+                // $scope.deals.splice(0, 1);
 
                 console.log("scope deals ?");
                 console.log($scope.deals);
@@ -316,14 +331,14 @@ angular.module('mean.maps')
               
                     // Create a marker for each place.
                     var marker = new google.maps.Marker({
-                        map: map,
+                        map: $scope.map,
                         //icon: image,
                         title: $scope.deals[i].title,
-                        draggable: true,
+                        draggable: false,
                         animation: google.maps.Animation.DROP,
                         position: new google.maps.LatLng($scope.deals[i].latitude,$scope.deals[i].longitude)
                     });
-
+                    
                     console.log("marker lat/lng from $scope.deals[i]:");
                     console.log("{" + $scope.deals[i].latitude + ";" + $scope.deals[i].longitude + "}");
                     console.log("marker 1rst position:");
@@ -331,17 +346,17 @@ angular.module('mean.maps')
                     // console.log("resultPosition before affectation : " + resultPosition);
                     // resultPosition = marker.getPosition();
                     // console.log("resultPosition after affectation : "  + resultPosition);
-                    markers.push(marker);
+                    $scope.markers.push(marker);
 
                 }
 
                 //recenter on result :
                 var bounds = new google.maps.LatLngBounds();
-                for(i=0;i<markers.length;i++) {
-                 bounds.extend(markers[i].getPosition());
+                for(i=0;i<$scope.markers.length;i++) {
+                 bounds.extend($scope.markers[i].getPosition());
                 }
 
-                map.fitBounds(bounds);
+                $scope.map.fitBounds(bounds);
 
 
 

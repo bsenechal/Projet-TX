@@ -29,6 +29,10 @@ angular.module('mean.deals').config(['$stateProvider',
         url: '/deals',
         templateUrl: 'deals/views/list.html'
       })
+      .state('deals by radius', {
+        url: '/dealsbyradius',
+        templateUrl: 'deals/views/list.html'
+      })
       .state('create deal', {
         url: '/deals/create',
         templateUrl: 'deals/views/create.html',
