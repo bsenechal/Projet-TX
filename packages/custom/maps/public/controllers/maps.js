@@ -299,21 +299,22 @@ angular.module('mean.maps')
                 if(!$scope.input){                
                     $scope.input = /** @type {HTMLInputElement} */ (
                         $window.document.getElementById('pac-input'));
+                        console.log("Got pac-input as input");
+                        console.log("Input :" + $scope.input);
+                        
+                        $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push($scope.input);
+
+                        console.log("Put input in map");
                 }
 
-                console.log("Got pac-input as input");
-                console.log("Input :" + $scope.input);
-
-                $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push($scope.input);
-
-                console.log("Put input in map");
  
                 var options = {
                     //types: ['(cities)']//,
                     //componentRestrictions: {country: "us"}
                 };
-
-                var autocomplete = new google.maps.places.Autocomplete($scope.input, options);
+                if(!$scope.autocomplete){
+                    $scope.autocomplete = new google.maps.places.Autocomplete($scope.input, options);
+                }
 
                 console.log("autocomplete created");
 
@@ -333,9 +334,9 @@ angular.module('mean.maps')
 
                 // Listen for the event fired when the user selects an item from the
                 // pick list. Retrieve the matching places for that item.
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                google.maps.event.addListener($scope.autocomplete, 'place_changed', function() {
                     console.log("Create autocomplete Listener");
-                    var place = autocomplete.getPlace();
+                    var place = $scope.autocomplete.getPlace();
 
                     console.log("Search result :");
                     console.log(place);
