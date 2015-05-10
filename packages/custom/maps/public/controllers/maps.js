@@ -317,9 +317,10 @@ angular.module('mean.maps')
 
                 console.log("autocomplete created");
 
-                //init circles and markers array :
-                if(!$scope.circles){                
-                    $scope.circles = [];
+                //init circle and markers array :
+                //clean old circle !
+                if($scope.circle && !($scope.srchLng && $scope.srchLat && $scope.srchRadius)){
+                    $scope.circle.setMap(null);
                 }
                 if(!$scope.markers){                
                     $scope.markers = [];
@@ -345,9 +346,9 @@ angular.module('mean.maps')
                     }
                     console.log("init search circle :");
                     //clean old circle !
-                    for (var j = 0; j < $scope.circles.length; j++) {
-                            $scope.circles[j].setMap(null);
-                    }                    
+                    if($scope.circle){
+                        $scope.circle.setMap(null);
+                    }
                     $scope.srchRadius = 1000000;
                     var circleOptions = {
                         center: place.geometry.location,
@@ -355,20 +356,19 @@ angular.module('mean.maps')
                         map: $scope.map,
                         editable: true
                     };
-                    var circle = new google.maps.Circle(circleOptions);
-                    $scope.srchLng = circle.getCenter().lng();
-                    $scope.srchLat = circle.getCenter().lat();
 
-                    $scope.circles.push(circle);
+                    $scope.circle = new google.maps.Circle(circleOptions);
+                    $scope.srchLng = $scope.circle.getCenter().lng();
+                    $scope.srchLat = $scope.circle.getCenter().lat();
 
-                    google.maps.event.addListener(circle, 'radius_changed', function () {
-                        $scope.srchRadius = circle.getRadius();
+                    google.maps.event.addListener($scope.circle, 'radius_changed', function () {
+                        $scope.srchRadius = $scope.circle.getRadius();
                         $scope.$apply();
                         $scope.findByRadius();
                     });
-                    google.maps.event.addListener(circle, 'center_changed', function () {
-                        $scope.srchLng = circle.getCenter().lng();
-                        $scope.srchLat = circle.getCenter().lat();
+                    google.maps.event.addListener($scope.circle, 'center_changed', function () {
+                        $scope.srchLng = $scope.circle.getCenter().lng();
+                        $scope.srchLat = $scope.circle.getCenter().lat();
                         $scope.$apply();
                         $scope.findByRadius();
                     });
