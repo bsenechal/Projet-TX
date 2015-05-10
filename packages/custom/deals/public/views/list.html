@@ -1,15 +1,34 @@
-<section data-ng-controller="DealsController">
- <!-- data-ng-init="findByRadius()"> -->
+<section data-ng-controller="DealsController" data-ng-init="findByRadius()">
   <form name="dealForm" class="form-horizontal col-md-6" role="form" data-ng-submit="findByRadius()" novalidate>
-  longitude :<input type="text" name="longitude" data-ng-model="srchLng"><br>
-  latitude :<input type="text" name="latitude" data-ng-model="srchLat"><br>
-  radius :<input type="text" name="radius" data-ng-model="srchRadius"><br>
   <div class="form-group">
-    <div class="col-md-offset-3 col-md-9">
-      <button mean-token="'create-submit'" type="submit" class="btn btn-info">Valider</button>
+    <label for="longitude" class="col-md-3 control-label">longitude</label>
+    <div class="col-md-9">
+      <input type="text" name="longitude" class="form-control" data-ng-model="srchLng"><br>
     </div>
   </div>
+  <div class="form-group">
+    <label for="latitude" class="col-md-3 control-label">latitude</label>
+    <div class="col-md-9">
+      <input type="text" name="latitude" class="form-control" data-ng-model="srchLat"><br>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="radius" class="col-md-3 control-label">radius</label>
+    <div class="col-md-9">
+      <input type="text" name="radius" class="form-control" data-ng-model="srchRadius"><br>
+    </div>
+  </div>
+    <div class="form-group">
+      <div class="col-md-offset-3 col-md-9">
+        <button mean-token="'create-submit'" type="submit" class="btn btn-info">Valider</button>
+      </div>
+    </div>
   </form>
+  <div class=".col-md-4">
+      Result on a Map :
+      <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+      <div map-canvas id="map-canvas" style="height: 300px;"></div>
+  </div>
   <div class=".col-md-4">
     <ul class="deals unstyled">
       <li data-ng-repeat="deal in deals">
@@ -45,10 +64,6 @@
       </li>
     </ul>
     <h1 data-ng-hide="!deals || deals.length">No deals yet. <br> Why don't you <a href="/#!/deals/create">Create One</a>?</h1>
-  </div>
-  <div class=".col-md-4">
-      Result on a Map :
-      <div map-canvas id="map-canvas" style="height: 300px;"></div>
   </div>
   
 </section>

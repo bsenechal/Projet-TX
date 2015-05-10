@@ -1,5 +1,28 @@
 'use strict';
 
+//TODO: make it work !
+//geolocation function :
+function geolocalize(map, navigator) {
+    var uPos;
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            uPos = new google.maps.LatLng(position.coords.latitude,
+                position.coords.longitude);
+            map.setCenter(uPos);
+            console.log('geolocalize: it works');
+        }, function(error) {
+            console.log('geolocalize: Error occurred. Error code: ' + error.code);
+        }, {
+            timeout: 5000
+        });
+    } else {
+        console.log('geolocalize: no geolocation support');
+        uPos = new google.maps.LatLng(-28.643387, 153.612224);
+        map.setCenter(uPos);
+    }
+    
+}
+
 
 
 /* jshint -W098 */
@@ -34,25 +57,6 @@ angular.module('mean.maps')
             $scope.package = {
                 name: 'maps'
             };
-
-            //TODO: make it work !
-            //geolocation function :
-            $scope.geolocalize = function(map) {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        var uPos = new google.maps.LatLng(position.coords.latitude,
-                            position.coords.longitude);
-                        map.setCenter(uPos);
-                        console.log('geolocalize: it works');
-                    }, function(error) {
-                        console.log('geolocalize: Error occurred. Error code: ' + error.code);
-                    }, {
-                        timeout: 5000
-                    });
-                } else {
-                    console.log('geolocalize: no geolocation support');
-                }
-            }
 
 
             Initializer.mapsInitialized.
@@ -94,13 +98,8 @@ angular.module('mean.maps')
                 $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
-                //if posible use localization :
-                var userPos = new google.maps.LatLng(-28.643387, 153.612224);
-                $scope.geolocalize($scope.map);
-                console.log(userPos);
-
-                //center config :
-                $scope.map.setCenter(userPos);
+                //if posible use localization to center the map:
+                geolocalize($scope.map, navigator);
 
                 console.log("mapinit");
 
@@ -110,6 +109,13 @@ angular.module('mean.maps')
                 // $scope.map.fitBounds(defaultBounds);
 
                 console.log("defaultBounds");
+
+
+                // ****************************
+                // ****************************
+                //      Set AUTOCOMPLETE
+                // ****************************
+                // ****************************
 
                 // Create the search box and link it to the UI element.
                 var input = /** @type {HTMLInputElement} */ (
@@ -164,14 +170,9 @@ angular.module('mean.maps')
                     });
                     console.log("marker 1rst position:");
                     console.log(marker.position);
-                    // console.log("resultPosition before affectation : " + resultPosition);
-                    // resultPosition = marker.getPosition();
+
                     $scope.latitude = marker.getPosition().lat();
                     $scope.longitude = marker.getPosition().lng();
-
-                    //to use as mongodb geo
-                    // $scope.loc = [marker.getPosition().lng(),marker.getPosition().lat()];
-
 
                     $scope.$apply();
                     // console.log("resultPosition after affectation : "  + resultPosition);
@@ -267,8 +268,6 @@ angular.module('mean.maps')
                         $scope.markers[j].setMap(null);
                 }
 
-                var userPos = new google.maps.LatLng(-28.643387, 153.612224);
-                // alert(userPos);
 
                 //Map options  :
                 var mapOptions = {
@@ -287,30 +286,82 @@ angular.module('mean.maps')
                         position: google.maps.ControlPosition.LEFT_CENTER
                     },
                     scaleControl: true,
-                    streetViewControl: true,
                     streetViewControlOptions: {
                         position: google.maps.ControlPosition.LEFT_TOP
                     },
                     mapTypeId: google.maps.MapTypeId.ROADMAP
-                }
+                };
+
 
 
                 $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
+                // ****************************
+                // ****************************
+                //      Set AUTOCOMPLETE
+                // ****************************
+                // ****************************
 
-                //center config :
-                $scope.map.setCenter(userPos);
+                var input = /** @type {HTMLInputElement} */ (
+                    $window.document.getElementById('pac-input'));
+
+
+                $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+                var options = {
+                    //types: ['(cities)']//,
+                    //componentRestrictions: {country: "us"}
+                };
+
+                var autocomplete = new google.maps.places.Autocomplete(input, options);
+
+                console.log("autocomplete created");
+
+                $scope.circles = [];
+
+                // Listen for the event fired when the user selects an item from the
+                // pick list. Retrieve the matching places for that item.
+                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                    console.log("Create autocomplete Listener");
+                    var place = autocomplete.getPlace();
+
+                    console.log("Search result :");
+                    console.log(place);
+
+                    if (!place.geometry) {
+                        alert('no result !');
+                        return;
+                    }
+                    console.log("init search circle :");
+                    //clean old circle !
+                    for (var j = 0; j < $scope.circles.length; j++) {
+                            $scope.circles[j].setMap(null);
+                    }                    
+                    $scope.srchRadius = 1000000;
+                    var circleOptions = {
+                        center: place.geometry.location,
+                        radius: $scope.srchRadius,
+                        map: $scope.map,
+                        editable: true
+                    };
+                    var circle = new google.maps.Circle(circleOptions);
+                    $scope.srchLng = circle.getCenter().lng();
+                    $scope.srchLat = circle.getCenter().lat();
+
+                    $scope.circles.push(circle);
+
+                    google.maps.event.addListener(circle, 'radius_changed', function () {
+                        $scope.srchRadius = circle.getRadius();
+                    });
+                    google.maps.event.addListener(circle, 'center_changed', function () {
+                        $scope.srchLng = circle.getCenter().lng();
+                        $scope.srchLat = circle.getCenter().lat();
+                    });
+                    $scope.$apply();
+                });
 
                 console.log("mapinit");
-
-                var defaultBounds = new google.maps.LatLngBounds(
-                    new google.maps.LatLng(-33.8902, 151.1759),
-                    new google.maps.LatLng(-33.8474, 151.2631));
-                $scope.map.fitBounds(defaultBounds);
-
-                console.log("defaultBounds");
-
 
                 //remove old marker :
                 for (var j = 0; j < $scope.markers.length; j++) {
@@ -318,13 +369,6 @@ angular.module('mean.maps')
                 }
                 
                 console.log("deals");
-                console.log($scope.deals);
-
-
-                
-                // $scope.deals.splice(0, 1);
-
-                console.log("scope deals ?");
                 console.log($scope.deals);
 
                 for (var i = 0; i < $scope.deals.length; i++) {
