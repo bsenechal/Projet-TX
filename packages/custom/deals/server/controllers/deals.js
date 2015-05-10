@@ -44,8 +44,8 @@ exports.dealsByRadius = function(req, res) {
   .geoNear(
     [srchLng,srchLat], 
     { 
-      maxDistance : srchRadius/6371, 
-      distanceMultiplier: 6371,
+      maxDistance : srchRadius/6378137, 
+      distanceMultiplier: 6378137,
       // query : 
       spherical : true 
     },

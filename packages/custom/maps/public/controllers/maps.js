@@ -69,7 +69,6 @@ angular.module('mean.maps')
 
                 $scope.markers = [];
 
-
                 //Map options  :
                 var mapOptions = {
                     zoom: 12,
@@ -95,7 +94,7 @@ angular.module('mean.maps')
                 }
 
 
-                $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
+                $scope.map = new google.maps.Map($window.document.getElementById('map-canvas'),
                     mapOptions);
 
                 //if posible use localization to center the map:
@@ -262,13 +261,6 @@ angular.module('mean.maps')
 
                 console.log("start initialize map");
 
-                $scope.markers = [];
-
-                for (var j = 0; j < $scope.markers.length; j++) {
-                        $scope.markers[j].setMap(null);
-                }
-
-
                 //Map options  :
                 var mapOptions = {
                     zoom: 12,
@@ -292,33 +284,51 @@ angular.module('mean.maps')
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
 
+                if(!$scope.map){
+                    $scope.map = new google.maps.Map($window.document.getElementById('map-canvas'),
+                        mapOptions);
+                }   
 
-
-                $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
-                    mapOptions);
+                console.log("Map created");
 
                 // ****************************
                 // ****************************
                 //      Set AUTOCOMPLETE
                 // ****************************
                 // ****************************
+                if(!$scope.input){                
+                    $scope.input = /** @type {HTMLInputElement} */ (
+                        $window.document.getElementById('pac-input'));
+                }
 
-                var input = /** @type {HTMLInputElement} */ (
-                    $window.document.getElementById('pac-input'));
+                console.log("Got pac-input as input");
+                console.log("Input :" + $scope.input);
 
+                $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push($scope.input);
 
-                $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
+                console.log("Put input in map");
+ 
                 var options = {
                     //types: ['(cities)']//,
                     //componentRestrictions: {country: "us"}
                 };
 
-                var autocomplete = new google.maps.places.Autocomplete(input, options);
+                var autocomplete = new google.maps.places.Autocomplete($scope.input, options);
 
                 console.log("autocomplete created");
 
-                $scope.circles = [];
+                //init circles and markers array :
+                if(!$scope.circles){                
+                    $scope.circles = [];
+                }
+                if(!$scope.markers){                
+                    $scope.markers = [];
+                }else
+                {
+                    for (var j = 0; j < $scope.markers.length; j++) {
+                        $scope.markers[j].setMap(null);
+                    }
+                }
 
                 // Listen for the event fired when the user selects an item from the
                 // pick list. Retrieve the matching places for that item.
@@ -353,12 +363,17 @@ angular.module('mean.maps')
 
                     google.maps.event.addListener(circle, 'radius_changed', function () {
                         $scope.srchRadius = circle.getRadius();
+                        $scope.$apply();
+                        $scope.findByRadius();
                     });
                     google.maps.event.addListener(circle, 'center_changed', function () {
                         $scope.srchLng = circle.getCenter().lng();
                         $scope.srchLat = circle.getCenter().lat();
+                        $scope.$apply();
+                        $scope.findByRadius();
                     });
                     $scope.$apply();
+                    $scope.findByRadius();
                 });
 
                 console.log("mapinit");
@@ -405,6 +420,7 @@ angular.module('mean.maps')
 
 
             });
+  
 
         }
     ]);
