@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mean.deals').controller('DealsController', ['$scope','$controller', '$stateParams', '$resource', '$location', 'Global', 'Deals',
-  function($scope, $controller, $stateParams,$resource, $location, Global, Deals) {
+angular.module('mean.deals').controller('DealsController', ['$scope','$controller','$q', '$stateParams', '$resource', '$location', 'Global', 'Deals',
+  function($scope, $controller,$q, $stateParams,$resource, $location, Global, Deals) {
     $scope.global = Global;
 
     $scope.hasAuthorization = function(deal) {
@@ -98,6 +98,16 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
       }
     };
 
+    $scope.queryAll = function(){
+      Deals.query(function(deals) {
+          console.log("find : server results");
+          console.log(deals);
+          $scope.deals = deals;
+          //TODO change the structure in order not to have that :
+          //it seems that we need to wait for the server response... ok but isn't there a more elegant way ?
+          $controller('MapDisplayController',{$scope: $scope});
+      });
+    }
 
     $scope.queryByRadius = function(){
         var DealsByRadius = $resource(
@@ -122,16 +132,27 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
       if (this.srchLng && this.srchLat && this.srchRadius){
         console.log("findByRadius : with paramaters");
         //A mettre dans une factory de services ?
+        //$scope.queryByRadius();
+
+        //Basic scheme :
+        //1: init an empty map
+        // $controller('MapInitController',{$scope: $scope});
+        //2: query the deals according to search parameters
         $scope.queryByRadius();
+        //3: update the map
+        // $controller('MapDisplayController', {$scope, $scope});
+        //Final: Watch search parameters change, if so -> do 2 and 3 again
+        // $scope.$watch('srchRadius',function(){
+        //   $scope.queryByRadius();
+        //   $controller('MapDisplayController', {$scope, $scope});
+        // },true)
       }
       else{
         console.log("findByRadius : find : without paramaters");
-        Deals.query(function(deals) {
-          console.log("find : server results");
-          console.log(deals);
-          $scope.deals = deals;
-          $controller('MapDisplayController',{$scope: $scope});
-        });
+        // $controller('MapInitController',{$scope: $scope});
+        $scope.queryAll();
+        // $controller('MapDisplayController', {$scope, $scope});
+        
       }
 
 

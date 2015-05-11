@@ -51,6 +51,85 @@ angular.module('mean.maps')
             mapsInitialized: mapsDefer.promise
         };
     })
+    .controller('MapInitController', ['$scope', '$window', 'Global', 'Maps', 'Initializer',
+        function($scope, $window, Global, Maps, Initializer) {
+            Initializer.mapsInitialized.
+            then(function() {
+                console.log("start initialize map");
+
+                //Map options  :
+                var mapOptions = {
+                    zoom: 12,
+                    //TODO : make that work !
+                    streetViewControl: false,
+                    // mapTypeControl: true,
+                    mapTypeControl: false,
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                        position: google.maps.ControlPosition.BOTTOM_CENTER
+                    },
+                    zoomControl: true,
+                    zoomControlOptions: {
+                        style: google.maps.ZoomControlStyle.LARGE,
+                        position: google.maps.ControlPosition.LEFT_CENTER
+                    },
+                    scaleControl: true,
+                    streetViewControlOptions: {
+                        position: google.maps.ControlPosition.LEFT_TOP
+                    },
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+
+                if(!$scope.map){
+                    $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
+                        mapOptions);
+                }   
+
+                console.log("Map created");
+
+                // ****************************
+                // ****************************
+                //      Set AUTOCOMPLETE
+                // ****************************
+                // ****************************
+                if(!$scope.input){                
+                    $scope.input = /** @type {HTMLInputElement} */ (
+                        document.getElementById('pac-input'));
+                        console.log("Got pac-input as input");
+                        console.log("Input :" + $scope.input);
+
+                        $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push($scope.input);
+
+                        console.log("Put input in map");
+                }
+
+ 
+                var options = {
+                    //types: ['(cities)']//,
+                    //componentRestrictions: {country: "us"}
+                };
+                if(!$scope.autocomplete){
+                    $scope.autocomplete = new google.maps.places.Autocomplete($scope.input, options);
+                }
+
+                console.log("autocomplete created");
+
+                //init circle and markers array :
+                //clean old circle !
+                if($scope.circle && !($scope.srchLng && $scope.srchLat && $scope.srchRadius)){
+                    $scope.circle.setMap(null);
+                }
+                if(!$scope.markers){                
+                    $scope.markers = [];
+                }else
+                {
+                    for (var j = 0; j < $scope.markers.length; j++) {
+                        $scope.markers[j].setMap(null);
+                    }
+                }
+                console.log("API and map: loaded !");
+            },function(){console.log("API not loaded !")});
+    }])
     .controller('MapsController', ['$scope', '$window', 'Global', 'Maps', 'Initializer',
         function($scope, $window, Global, Maps, Initializer) {
             $scope.global = Global;
@@ -58,6 +137,14 @@ angular.module('mean.maps')
                 name: 'maps'
             };
 
+            //************************************
+            //************************************
+            // NEED TO BE GENERIC !!!
+            //************************************
+            //************************************
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<            
 
             Initializer.mapsInitialized.
             then(function() {
@@ -91,14 +178,12 @@ angular.module('mean.maps')
                         position: google.maps.ControlPosition.LEFT_TOP
                     },
                     mapTypeId: google.maps.MapTypeId.ROADMAP
-                }
+                };
 
 
-                $scope.map = new google.maps.Map($window.document.getElementById('map-canvas'),
+                $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
-                //if posible use localization to center the map:
-                geolocalize($scope.map, navigator);
 
                 console.log("mapinit");
 
@@ -118,7 +203,7 @@ angular.module('mean.maps')
 
                 // Create the search box and link it to the UI element.
                 var input = /** @type {HTMLInputElement} */ (
-                    $window.document.getElementById('pac-input'));
+                    document.getElementById('pac-input'));
 
 
                 $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -132,9 +217,20 @@ angular.module('mean.maps')
 
                 console.log("autocomplete created");
 
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+                //if posible use localization to center the map:
+                geolocalize($scope.map, navigator);
                 // Listen for the event fired when the user selects an item from the
                 // pick list. Retrieve the matching places for that item.
-                google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                if($scope.place_changedListener){
+                    google.maps.event.removeListener($scope.place_changedListener); 
+                }
+
+                $scope.place_changedListener = google.maps.event.addListener(autocomplete, 'place_changed', function() {
                     console.log("Create autocomplete Listener");
                     var place = autocomplete.getPlace();
 
@@ -183,8 +279,11 @@ angular.module('mean.maps')
 
 
                     $scope.markers.push(marker);
+                    if($scope.dragendListener){
+                        google.maps.event.removeListener($scope.dragendListener); 
+                    }
 
-                    google.maps.event.addListener(marker, 'dragend', function() {
+                    $scope.dragendListener = google.maps.event.addListener(marker, 'dragend', function() {
                         console.log("marker dragged");
 
                         //TODO : solde the apply issue -> works only partially ! -> DONE
@@ -215,9 +314,7 @@ angular.module('mean.maps')
                     //limit the search on the specific displayed map :
                     //autocomplete.setBounds(bounds);
                 });
-
-            });
-
+            })
         }
     ])
     .controller('MapDisplayController', ['$scope', '$window', 'Global', 'Maps', 'Initializer',
@@ -226,6 +323,16 @@ angular.module('mean.maps')
             $scope.package = {
                 name: 'maps'
             };
+            console.log("In MapDisplayController");
+
+            //************************************
+            //************************************
+            // NEED TO BE GENERIC !!!
+            //************************************
+            //************************************
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
             Initializer.mapsInitialized.
             then(function() {
@@ -256,7 +363,7 @@ angular.module('mean.maps')
                 };
 
                 if(!$scope.map){
-                    $scope.map = new google.maps.Map($window.document.getElementById('map-canvas'),
+                    $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                         mapOptions);
                 }   
 
@@ -269,7 +376,7 @@ angular.module('mean.maps')
                 // ****************************
                 if(!$scope.input){                
                     $scope.input = /** @type {HTMLInputElement} */ (
-                        $window.document.getElementById('pac-input'));
+                        document.getElementById('pac-input'));
                         console.log("Got pac-input as input");
                         console.log("Input :" + $scope.input);
 
@@ -302,6 +409,10 @@ angular.module('mean.maps')
                         $scope.markers[j].setMap(null);
                     }
                 }
+
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
                 // Listen for the event fired when the user selects an item from the
                 // pick list. Retrieve the matching places for that item.
@@ -344,7 +455,10 @@ angular.module('mean.maps')
                     }
                     $scope.radius_changedListener = google.maps.event.addListener($scope.circle, 'radius_changed', function () {
                         $scope.srchRadius = $scope.circle.getRadius();
+                        // $scope.srchLng = $scope.circle.getCenter().lng();
+                        // $scope.srchLat = $scope.circle.getCenter().lat();
                         //Clear listener :
+                    // $scope.mapChanged = true;
                         $scope.$apply();
                         $scope.queryByRadius();
                     });
@@ -353,13 +467,16 @@ angular.module('mean.maps')
                         google.maps.event.removeListener($scope.center_changedListener); 
                     }
                     $scope.center_changedListener = google.maps.event.addListener($scope.circle, 'center_changed', function () {
+                        // $scope.srchRadius = $scope.circle.getRadius();
                         $scope.srchLng = $scope.circle.getCenter().lng();
                         $scope.srchLat = $scope.circle.getCenter().lat();
                         //Clear listener :
+                    // $scope.mapChanged = true;
                         $scope.$apply();
                         $scope.queryByRadius();
                     });           
                     //Clear listener :
+                    // $scope.mapChanged = true;
                     $scope.$apply();
                     $scope.queryByRadius();
                 });
@@ -404,9 +521,6 @@ angular.module('mean.maps')
                 }
 
                 $scope.map.fitBounds(bounds);
-
             });
-  
-
         }
     ]);
