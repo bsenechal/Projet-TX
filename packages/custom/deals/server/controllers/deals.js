@@ -42,12 +42,12 @@ exports.dealsByRadius = function(req, res) {
   // .find()
   // .where('loc')
   .geoNear(
-    [srchLng,srchLat], 
-    { 
-      maxDistance : srchRadius/6378137, 
+    [srchLng,srchLat],
+    {
+      maxDistance : srchRadius/6378137,
       distanceMultiplier: 6378137,
-      // query : 
-      spherical : true 
+      // query :
+      spherical : true
     },
     function(err, results, stats) {
       if (err) throw err;
@@ -125,6 +125,47 @@ exports.create = function(req, res) {
     }
   ]);
 };
+
+// Pourrisseur de BDD :D
+exports.generateDeals = function(req, res) {
+  var long = 49.3958525;
+  var lat = 2.7949477;
+
+  for (var i = 0 ; i < 100 ; i++){
+    var deal = new Deal(req.body);
+
+    deal.user = req.user;
+    deal.title = "test" + i;
+    deal.description = "test description" + i;
+    deal.initialPrice = 10;
+    deal.salePrice = 1;
+
+    deal.latitude = long;
+    deal.longitude = lat;
+
+    if (lat < 2.8613806) {
+      lat += 0.000001;
+    } else {
+      lat =  2.7949477;
+    }
+
+    if (long < 49.4207603) {
+      long += 0.000001;
+    } else {
+      long =  49.3958525;
+    }
+
+    deal.save(function(err) {
+      if (err) {
+        return res.status(500).json({
+          error: 'Cannot save the deal'
+        });
+    }
+    res.status(200).json();
+  });
+}
+};
+
 
 /**
  * Update a deal

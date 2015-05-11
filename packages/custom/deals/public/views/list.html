@@ -24,14 +24,16 @@
       </div>
     </div>
   </form>
+
   <div class=".col-md-4">
       Result on a Map : [{{srchLng}},{{srchLat}}] rad : {{srchRadius}}
       <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
       <div map-canvas id="map-canvas" style="height: 300px;"></div>
   </div>
+  Recherche : <input ng-model="searchQuery">
   <div class=".col-md-4">
     <ul class="deals unstyled">
-      <li data-ng-repeat="deal in deals">
+      <li data-ng-repeat="deal in deals | filter:searchQuery">
         <h2>
           <a data-ng-href="#!/deals/{{deal._id}}">{{deal.title}}</a>
           <span data-ng-if="hasAuthorization(deal)">
@@ -65,5 +67,5 @@
     </ul>
     <h1 data-ng-hide="!deals || deals.length">No deals yet. <br> Why don't you <a href="/#!/deals/create">Create One</a>?</h1>
   </div>
-  
+
 </section>
