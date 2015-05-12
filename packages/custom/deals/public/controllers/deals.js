@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mean.deals').controller('DealsController', ['$scope','$controller','$q', '$stateParams', '$resource', '$location', 'Global', 'Deals',
-  function($scope, $controller,$q, $stateParams,$resource, $location, Global, Deals) {
+angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope','$controller','$q', '$stateParams', '$resource', '$location', 'Global', 'Deals',
+  function($scope,$rootScope, $controller,$q, $stateParams,$resource, $location, Global, Deals) {
     $scope.global = Global;
 
     $scope.hasAuthorization = function(deal) {
@@ -100,37 +100,56 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
 
     $scope.queryAll = function(){
       Deals.query(function(deals) {
-          console.log("find : server results");
+          console.log("queryAll() : server results");
           console.log(deals);
           $scope.deals = deals;
+          if($scope.queryExecuted){
+            $scope.queryExecuted = false
+          }else{
+            $scope.queryExecuted = true;
+          }
           //TODO change the structure in order not to have that :
           //it seems that we need to wait for the server response... ok but isn't there a more elegant way ?
-          $controller('MapDisplayController',{$scope: $scope});
+          // $controller('MapDisplayController',{$scope: $scope});
       });
     }
 
     $scope.queryByRadius = function(){
-        var DealsByRadius = $resource(
+      console.log("queryByRadius(): search parameters : " 
+        + $rootScope.srchLng + ";"
+        + $rootScope.srchLat +";"
+        + $rootScope.srchRadius
+      );        
+      var DealsByRadius = $resource(
           '/dealsbyradius',
-          {srchLng: $scope.srchLng,srchLat: $scope.srchLat, srchRadius: $scope.srchRadius},
+          {srchLng: $rootScope.srchLng,srchLat: $rootScope.srchLat, srchRadius: $rootScope.srchRadius},
           {
             query: {method:'POST',isArray: true }
           }
         );
-        console.log("findByRadius: ressource created");
+        console.log("queryByRadius(): ressource created");
         DealsByRadius.query(function(deals) {
-          console.log("findByRadius : server results");
+          console.log("queryByRadius(): server results");
           console.log(deals);
           $scope.deals = deals;
-          $controller('MapDisplayController',{$scope: $scope});
+          if($scope.queryExecuted){
+            $scope.queryExecuted = false
+          }else{
+            $scope.queryExecuted = true;
+          }
+          // $controller('MapDisplayController',{$scope: $scope});
         });    
     };
 
     $scope.findByRadius = function() {
-      console.log("findByRadius");
-      console.log(this.srchLng + ";"+ this.srchLat +";"+ this.srchRadius);
-      if (this.srchLng && this.srchLat && this.srchRadius){
-        console.log("findByRadius : with paramaters");
+      console.log("findByRadius(): start query choice");
+      console.log("findByRadius(): search parameters : " 
+        + $rootScope.srchLng + ";"
+        + $rootScope.srchLat +";"
+        + $rootScope.srchRadius
+      );
+      if ($rootScope.srchLng && $rootScope.srchLat && $rootScope.srchRadius){
+        console.log("findByRadius() : with paramaters");
         //A mettre dans une factory de services ?
         //$scope.queryByRadius();
 
@@ -148,7 +167,7 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
         // },true)
       }
       else{
-        console.log("findByRadius : find : without paramaters");
+        console.log("findByRadius() : find : without paramaters");
         // $controller('MapInitController',{$scope: $scope});
         $scope.queryAll();
         // $controller('MapDisplayController', {$scope, $scope});
@@ -156,13 +175,6 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$controlle
       }
 
 
-    };
-
-    $scope.createMap = function() {
-      Deals.query(function(deals) {
-        //call map controller once $scope.deals initialized
-        $controller('MapsController',{$scope: $scope});
-      });
     };
 
     $scope.findOne = function() {

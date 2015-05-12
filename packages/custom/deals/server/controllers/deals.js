@@ -38,6 +38,10 @@ exports.dealsByRadius = function(req, res) {
   console.log("Server Side: dealsByRadius");
   // console.log(req);
   console.log("srchLng:" + srchLng + ", srchLat: " + srchLat + ", srchRadius: " + srchRadius);
+
+  if(srchLng && srchLat && srchRadius){
+
+
   Deal
   // .find()
   // .where('loc')
@@ -96,6 +100,11 @@ exports.dealsByRadius = function(req, res) {
   //   console.log("list the deals by radius -> Success !");
   //   res.json(deals);
   // });
+  }
+  else{
+      return res.status(500).json({
+        error: 'Empty Search Parameters !'
+      });  }
 };
 
 /**
@@ -131,7 +140,7 @@ exports.generateDeals = function(req, res) {
   var long = 49.3958525;
   var lat = 2.7949477;
 
-  for (var i = 0 ; i < 100 ; i++){
+  for (var i = 0 ; i < 1000 ; i++){
     var deal = new Deal(req.body);
 
     deal.user = req.user;
@@ -142,6 +151,8 @@ exports.generateDeals = function(req, res) {
 
     deal.latitude = long;
     deal.longitude = lat;
+
+    deal.loc = [long,lat];
 
     if (lat < 2.8613806) {
       lat += 0.000001;
@@ -165,7 +176,6 @@ exports.generateDeals = function(req, res) {
   });
 }
 };
-
 
 /**
  * Update a deal
