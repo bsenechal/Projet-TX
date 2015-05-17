@@ -1,6 +1,5 @@
 'use strict';
 
-//TODO: make it work !
 //geolocation function :
 function geolocalize(map, navigator) {
     var uPos;
@@ -77,7 +76,6 @@ angular.module('mean.maps')
                 //Map options  :
                 var mapOptions = {
                     zoom: 12,
-                    //TODO : make that work !
                     streetViewControl: false,
                     // mapTypeControl: true,
                     mapTypeControl: false,
@@ -91,9 +89,6 @@ angular.module('mean.maps')
                         position: google.maps.ControlPosition.LEFT_CENTER
                     },
                     scaleControl: true,
-                    streetViewControlOptions: {
-                        position: google.maps.ControlPosition.LEFT_TOP
-                    },
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
 
@@ -101,6 +96,7 @@ angular.module('mean.maps')
                     $scope.map = new google.maps.Map(document.getElementById('map-canvas'),
                         mapOptions);
                 }
+
 
                 console.log("initMap(): Map created");
 
@@ -178,7 +174,7 @@ angular.module('mean.maps')
                         //icon: image,
                         title: place.name,
                         draggable: true,
-                        animation: google.maps.Animation.DROP,
+                        // animation: google.maps.Animation.DROP,
                         position: place.geometry.location
                     });
                     console.log("marker 1rst position:");
@@ -204,7 +200,6 @@ angular.module('mean.maps')
                     $scope.dragendListener = google.maps.event.addListener(marker, 'dragend', function() {
                         console.log("marker dragged");
 
-                        //TODO : solde the apply issue -> works only partially ! -> DONE
                         $scope.latitude = marker.getPosition().lat();
                         $scope.longitude = marker.getPosition().lng();
 
@@ -342,7 +337,7 @@ angular.module('mean.maps')
                             //icon: image,
                             title: $scope.deals[i].title,
                             draggable: false,
-                            animation: google.maps.Animation.DROP,
+                            // animation: google.maps.Animation.DROP,
                             position: new google.maps.LatLng($scope.deals[i].latitude, $scope.deals[i].longitude)
                         });
 
@@ -353,7 +348,6 @@ angular.module('mean.maps')
                         // console.log("resultPosition after affectation : "  + resultPosition);
                         $scope.markers.push(marker);
                     }
-
                     //recenter on result :
                     var bounds = new google.maps.LatLngBounds();
                     for (i = 0; i < $scope.markers.length; i++) {
@@ -366,6 +360,7 @@ angular.module('mean.maps')
                 else{
                     console.log("markerMap(): $scope.deals is not yet set !");
                 }
+
 
             }
 

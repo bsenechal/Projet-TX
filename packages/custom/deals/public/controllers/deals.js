@@ -5,7 +5,9 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope
     $scope.global = Global;
 
     $scope.hasAuthorization = function(deal) {
-      if (!deal || !deal.user) return false;
+      if (!deal || !deal.user){
+        return false;
+      }
       return $scope.global.isAdmin || deal.user._id === $scope.global.user._id;
     };
 
@@ -44,7 +46,7 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope
         deal.$remove(function(response) {
           for (var i in $scope.deals) {
             if ($scope.deals[i] === deal) {
-	      $scope.deals.splice(i,1);
+        $scope.deals.splice(i,1);
             }
           }
           $location.path('deals');
@@ -61,7 +63,7 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope
         var deal = $scope.deal;
         if(!deal.updated) {
           deal.updated = [];
-	}
+  }
         deal.updated.push(new Date().getTime());
 
         deal.$update(function() {
@@ -84,7 +86,7 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope
        }
     };
 
-	 $scope.updateGradePlus = function(deal) {
+   $scope.updateGradePlus = function(deal) {
       if (deal) {
         deal.grade++;
         deal.$update();
@@ -108,9 +110,6 @@ angular.module('mean.deals').controller('DealsController', ['$scope','$rootScope
           }else{
             $scope.queryExecuted = true;
           }
-          //TODO change the structure in order not to have that :
-          //it seems that we need to wait for the server response... ok but isn't there a more elegant way ?
-          // $controller('MapDisplayController',{$scope: $scope});
       });
     }
 

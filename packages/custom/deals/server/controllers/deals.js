@@ -137,8 +137,8 @@ exports.create = function(req, res) {
 
 // Pourrisseur de BDD :D
 exports.generateDeals = function(req, res) {
-  var long = 49.3958525;
-  var lat = 2.7949477;
+  var long = -50;
+  var lat = -50;
 
   for (var i = 0 ; i < 1000 ; i++){
     var deal = new Deal(req.body);
@@ -154,16 +154,16 @@ exports.generateDeals = function(req, res) {
 
     deal.loc = [long,lat];
 
-    if (lat < 2.8613806) {
-      lat += 0.000001;
+    if (lat < 50) {
+      lat += 0.4;
     } else {
-      lat =  2.7949477;
+      lat =  -50;
     }
 
-    if (long < 49.4207603) {
-      long += 0.000001;
+    if (long < 50) {
+      long += 0.4;
     } else {
-      long =  49.3958525;
+      long =  -50;
     }
 
     deal.save(function(err) {
